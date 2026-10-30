@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.users import router as user_router
 from app.api.weather import router as weather_router
+from app.api.password_reset import router as password_reset_router
 from app.api import favorites
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import ALLOWED_ORIGINS
@@ -20,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(user_router)
+app.include_router(password_reset_router)
 app.include_router(weather_router)
 app.include_router(favorites.router)
 app.include_router(search_history.router)

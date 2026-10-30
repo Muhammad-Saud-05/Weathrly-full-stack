@@ -4,7 +4,7 @@ A weather dashboard. Sign in, search for a city, and see its current conditions 
 
 ## What it does today
 
-- Sign up and sign in with JWT
+- Sign up and sign in with JWT, and reset a forgotten password by email
 - Current weather and five-day forecast for any city, from OpenWeatherMap
 - Favorite cities (add, list, remove)
 - Per-user search history (list, clear)
@@ -45,6 +45,8 @@ Environment variables (`backend/.env`):
 | `OPENWEATHER_API_KEY` | Your OpenWeatherMap API key                                             |
 | `SECRET_KEY`          | Secret used to sign JWTs. The app refuses to start without it           |
 | `ALLOWED_ORIGINS`     | Comma-separated CORS origins (default `http://localhost:5173`)          |
+| `FRONTEND_URL`        | Frontend address used in password reset links (default `http://localhost:5173`) |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Optional. Mail server for password reset emails. With no `SMTP_HOST`, the reset link is printed in the server log instead |
 
 Generate a secret key with:
 
@@ -108,6 +110,8 @@ All endpoints except `POST /users`, `POST /login`, `/` and `/health` need an `Au
 | POST   | `/users`                    | Create an account. `201` on success, `409` if email or username is taken |
 | POST   | `/login`                    | Form fields `username` (the email) and `password`; returns a bearer token |
 | GET    | `/me`                       | The signed-in user                                                 |
+| POST   | `/forgot-password`          | Body `email`. Emails a reset link; always answers the same way, whether or not the account exists |
+| POST   | `/reset-password`           | Body `token` (from the link) and `password`. `400` if the link is invalid, expired or already used |
 | GET    | `/weather/current?city=`    | Current weather. `404` if the city is unknown, `502` if OpenWeather fails. Saves a history entry |
 | GET    | `/weather/forecast?city=`   | 3-hourly forecast entries (UTC)                                    |
 | GET    | `/favorites/`               | List favorite cities                                               |
@@ -119,5 +123,4 @@ All endpoints except `POST /users`, `POST /login`, `/` and `/health` need an `Au
 ## Planned
 
 - AI-powered weather prediction (no AI or ML code exists yet)
-- Password reset
 - Frontend redesign
