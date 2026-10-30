@@ -4,7 +4,7 @@ A weather dashboard. Sign in, search for a city, and see its current conditions 
 
 ## What it does today
 
-- JWT sign-in (accounts are created through the API; there is no sign-up page yet)
+- Sign up and sign in with JWT
 - Current weather and five-day forecast for any city, from OpenWeatherMap
 - Favorite cities (add, list, remove)
 - Per-user search history (list, clear)
@@ -81,11 +81,11 @@ npm run dev
 | -------------- | ------------------------------------------------------- |
 | `VITE_API_URL` | Backend base URL (default `http://127.0.0.1:8000`)      |
 
-The app is at http://localhost:5173. The landing page is at `/`, sign-in at `/login`, and the dashboard at `/dashboard` (it redirects to `/login` when you're signed out).
+The app is at http://localhost:5173. The landing page is at `/`, sign-in at `/login`, sign-up at `/register`, and the dashboard at `/dashboard` (it redirects to `/login` when you're signed out).
 
 ### Creating your first account
 
-There is no sign-up page yet. Open http://127.0.0.1:8000/docs, call `POST /users` with a username, email and a password of at least 8 characters, then sign in at http://localhost:5173/login with that email and password.
+Open http://localhost:5173/register, pick a username, enter your email and a password of at least 8 characters, and you're signed in. You can also create an account through the API: call `POST /users` at http://127.0.0.1:8000/docs.
 
 ## Tests and checks
 
@@ -119,5 +119,5 @@ All endpoints except `POST /users`, `POST /login`, `/` and `/health` need an `Au
 ## Planned
 
 - AI-powered weather prediction (no AI or ML code exists yet)
-- Sign-up page and password reset
+- Password reset
 - Frontend redesign

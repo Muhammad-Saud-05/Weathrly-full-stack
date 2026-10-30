@@ -80,3 +80,17 @@ body {
     animation: sky-fade 200ms ease both;
   }
 }
+
+.sky-spinner {
+  animation: sky-spin 800ms linear infinite;
+}
+
+@keyframes sky-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-spinner {
+    animation-duration: 2s;
+  }
+}
