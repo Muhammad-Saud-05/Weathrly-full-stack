@@ -8,13 +8,9 @@ import FormError from "../components/auth/FormError";
 import PasswordInput from "../components/auth/PasswordInput";
 import SubmitButton from "../components/auth/SubmitButton";
 import { inputClass, labelClass, linkClass } from "../components/auth/authStyles";
+import PasswordHint from "../components/auth/PasswordHint";
+import { EMAIL_PATTERN, USERNAME_MAX, USERNAME_MIN, passwordError } from "../utils/validation";
 import type { User } from "../types";
-
-// These mirror the backend's rules (schemas/user.py), so people see problems before submitting
-const USERNAME_MIN = 3;
-const USERNAME_MAX = 50;
-const PASSWORD_MIN = 8;
-const PASSWORD_MAX = 72;
 
 type Field = "username" | "email" | "password";
 type FieldErrors = Partial<Record<Field, string>>;
@@ -26,10 +22,10 @@ function validate(username: string, email: string, password: string): FieldError
   if (name.length < USERNAME_MIN) errors.username = `Use at least ${USERNAME_MIN} characters.`;
   else if (name.length > USERNAME_MAX) errors.username = `Use ${USERNAME_MAX} characters or fewer.`;
 
-  if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.email = "Enter a valid email address.";
+  if (!EMAIL_PATTERN.test(email.trim())) errors.email = "Enter a valid email address.";
 
-  if (password.length < PASSWORD_MIN) errors.password = `Use at least ${PASSWORD_MIN} characters.`;
-  else if (password.length > PASSWORD_MAX) errors.password = `Use ${PASSWORD_MAX} characters or fewer.`;
+  const problem = passwordError(password);
+  if (problem) errors.password = problem;
 
   return errors;
 }
@@ -99,8 +95,6 @@ export default function Register() {
       setSubmitting(false);
     }
   };
-
-  const passwordLongEnough = password.length >= PASSWORD_MIN;
 
   return (
     <AuthLayout>
@@ -182,23 +176,7 @@ export default function Register() {
               {errors.password}
             </p>
           )}
-          <p id="password-hint" className="flex items-center gap-1.5 text-[13px] text-slate-600">
-            <svg
-              aria-hidden="true"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={passwordLongEnough ? "text-[#1d7a3e]" : "text-slate-400"}
-            >
-              {passwordLongEnough ? <path d="M5 12.5l4.5 4.5L19 7.5" /> : <circle cx="12" cy="12" r="8" />}
-            </svg>
-            <span className={passwordLongEnough ? "text-[#1d7a3e]" : undefined}>At least {PASSWORD_MIN} characters</span>
-          </p>
+          <PasswordHint id="password-hint" password={password} />
         </div>
 
         <FormError id="register-error" message={error} />

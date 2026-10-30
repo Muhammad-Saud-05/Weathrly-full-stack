@@ -87,9 +87,9 @@ export default function Login() {
             <label htmlFor="password" className={labelClass}>
               Password
             </label>
-            <a href="#" className={`text-[13px] ${linkClass}`}>
+            <Link to="/forgot-password" className={`text-[13px] ${linkClass}`}>
               Forgot password?
-            </a>
+            </Link>
           </div>
           <PasswordInput
             id="password"
