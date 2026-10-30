@@ -5,6 +5,7 @@ import { setToken } from "../utils/auth";
 import { getErrorMessage } from "../utils/errors";
 import AuthLayout from "../layouts/AuthLayout";
 import FormError from "../components/auth/FormError";
+import PasswordInput from "../components/auth/PasswordInput";
 import SubmitButton from "../components/auth/SubmitButton";
 import { inputClass, labelClass, linkClass } from "../components/auth/authStyles";
 import type { User } from "../types";
@@ -37,7 +38,6 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -165,31 +165,17 @@ export default function Register() {
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-baseline justify-between">
-            <label htmlFor="password" className={labelClass}>
-              Password
-            </label>
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-pressed={showPassword}
-              className={`text-[13px] ${linkClass}`}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-          <input
+          <label htmlFor="password" className={labelClass}>
+            Password
+          </label>
+          <PasswordInput
             id="password"
-            type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
             onBlur={() => touch("password")}
-            required
-            placeholder="Password"
-            aria-invalid={shown("password") ? true : undefined}
-            aria-describedby={describedBy("password", "password-hint")}
-            className={inputClass}
+            invalid={!!shown("password")}
+            describedBy={describedBy("password", "password-hint")}
           />
           {shown("password") && (
             <p id="password-error" className="text-[13px] text-[#a30018]">

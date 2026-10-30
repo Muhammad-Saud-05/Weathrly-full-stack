@@ -5,6 +5,7 @@ import { setToken } from "../utils/auth";
 import { getErrorMessage } from "../utils/errors";
 import AuthLayout from "../layouts/AuthLayout";
 import FormError from "../components/auth/FormError";
+import PasswordInput from "../components/auth/PasswordInput";
 import SubmitButton from "../components/auth/SubmitButton";
 import { inputClass, labelClass, linkClass } from "../components/auth/authStyles";
 
@@ -90,17 +91,13 @@ export default function Login() {
               Forgot password?
             </a>
           </div>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Password"
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? "login-error" : undefined}
-            className={inputClass}
+            onChange={setPassword}
+            invalid={!!error}
+            describedBy={error ? "login-error" : undefined}
           />
         </div>
 
