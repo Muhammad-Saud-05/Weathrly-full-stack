@@ -9,25 +9,14 @@ from app.services.weather_service import (
     CityNotFoundError,
     WeatherError,
 )
-from app.db.database import SessionLocal
 from app.models.search_history import SearchHistory
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_db
 from app.utils.normalizer import normalize_city
 
 router = APIRouter(prefix="/weather", tags=["Weather"])
 
 # non-empty (not just whitespace), at most 100 characters
 CityQuery = Annotated[str, Query(min_length=1, max_length=100, pattern=r"\S")]
-
-
-# DB dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 def raise_http_error(err: WeatherError):
     if isinstance(err, CityNotFoundError):

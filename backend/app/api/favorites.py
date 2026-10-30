@@ -1,22 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.db.database import SessionLocal
 from app.models.favorite_city import FavoriteCity
 from app.schemas.favorite_city import FavoriteCityCreate, FavoriteCityResponse
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_db
 
 router = APIRouter(prefix="/favorites", tags=["Favorites"])
-
-
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 # ADD FAVORITE
 @router.post("/", response_model=FavoriteCityResponse)

@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 
 from app.schemas.user import UserCreate
 from app.models.user import User
-from app.db.database import SessionLocal
 from app.core.security import hash_password
 
 from app.core.security import verify_password
