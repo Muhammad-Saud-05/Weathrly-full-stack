@@ -10,6 +10,7 @@ from app.services.weather_service import (
     WeatherError,
 )
 from app.models.search_history import SearchHistory
+from app.schemas.weather import CurrentWeatherResponse, ForecastItemResponse
 from app.dependencies import get_current_user, get_db
 from app.utils.normalizer import normalize_city
 
@@ -25,7 +26,7 @@ def raise_http_error(err: WeatherError):
 
 
 # CURRENT WEATHER
-@router.get("/current")
+@router.get("/current", response_model=CurrentWeatherResponse)
 def current_weather(
     city: CityQuery,
     db: Session = Depends(get_db),
@@ -52,7 +53,7 @@ def current_weather(
 
 
 # FORECAST
-@router.get("/forecast")
+@router.get("/forecast", response_model=list[ForecastItemResponse])
 def forecast(
     city: CityQuery,
     current_user=Depends(get_current_user)
