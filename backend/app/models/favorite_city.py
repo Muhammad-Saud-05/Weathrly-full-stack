@@ -6,7 +6,7 @@ class FavoriteCity(Base):
     __tablename__ = "favorite_cities"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     city_name = Column(String, nullable=False)
     country = Column(String, nullable=True)

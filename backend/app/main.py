@@ -1,13 +1,10 @@
 from fastapi import FastAPI
-from app.db.database import Base, engine
 from app.api.users import router as user_router
 from app.api.weather import router as weather_router
 from app.api import favorites
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import ALLOWED_ORIGINS
 from app.api import search_history
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Weathrly API",

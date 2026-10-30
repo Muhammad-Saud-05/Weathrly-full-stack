@@ -58,6 +58,8 @@ Create the database tables:
 alembic upgrade head
 ```
 
+Run this again after pulling changes that add migrations. If your database was created by an older version of the app (which created tables on startup), either drop and recreate it, or run `alembic stamp head` to mark it as up to date. Stamping keeps the old foreign keys, which do not yet delete a user's favorites and history along with the user.
+
 Run the API (from `backend/`):
 
 ```bash
