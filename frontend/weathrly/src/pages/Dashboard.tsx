@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { isAxiosError } from "axios";
 import { api } from "../api/axios";
 import type { Favorite, ForecastDay, ForecastItem, HistoryItem, User, Weather } from "../types";
@@ -9,6 +9,37 @@ import SearchHistory from "../components/dashboard/SearchHistory";
 import FavoriteList from "../components/dashboard/FavoriteList";
 import CurrentWeather from "../components/weather/CurrentWeather";
 
+function groupForecast(list: ForecastItem[]): ForecastDay[] {
+  if (!Array.isArray(list)) return [];
+
+  const grouped: Record<string, { temps: number[]; descriptions: string[] }> = {};
+
+  list.forEach((item) => {
+    const date = item.datetime.split(" ")[0];
+
+    if (!grouped[date]) {
+      grouped[date] = {
+        temps: [],
+        descriptions: [],
+      };
+    }
+
+    grouped[date].temps.push(item.temperature);
+    grouped[date].descriptions.push(item.description);
+  });
+
+  return Object.keys(grouped).map((date) => {
+    const temps = grouped[date].temps;
+
+    return {
+      date,
+      min: Math.min(...temps),
+      max: Math.max(...temps),
+      description: grouped[date].descriptions[0],
+    };
+  });
+}
+
 export default function Dashboard() {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,29 +49,36 @@ export default function Dashboard() {
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
   const [activeCity, setActiveCity] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const inFlight = useRef(false);
 
 
-  // Fetch weather
-  const fetchWeather = async (searchedCity: string) => {
-    if (!searchedCity) return;
+  // Load current weather and forecast for a city, then refresh history
+  const loadCity = async (city: string) => {
+    if (!city || inFlight.current) return;
 
+    inFlight.current = true;
     setLoading(true);
     setError("");
-    setWeather(null);
 
     try {
-      const res = await api.get<Weather>(`/weather/current?city=${searchedCity}`);
+      const [weatherRes, forecastRes] = await Promise.all([
+        api.get<Weather>(`/weather/current?city=${city}`),
+        api.get<ForecastItem[]>(`/weather/forecast?city=${city}`),
+      ]);
 
-      setWeather(res.data);
-      setActiveCity(searchedCity);
+      setWeather(weatherRes.data);
+      setForecast(groupForecast(forecastRes.data));
+      setActiveCity(city);
 
       await fetchHistory();
-      await fetchForecast(searchedCity);
-
     } catch (err) {
-    console.log(err);
-    setError("Could not fetch weather");
+      console.error(err);
+      setWeather(null);
+      setForecast([]);
+      setActiveCity("");
+      setError("Could not fetch weather");
     } finally {
+      inFlight.current = false;
       setLoading(false);
     }
   };
@@ -97,73 +135,6 @@ export default function Dashboard() {
   };
 
 
-  // fetch favorites weather
-  const fetchWeatherFromFavorite = async (cityName: string) => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await api.get<Weather>(`/weather/current?city=${cityName}`);
-      setWeather(res.data);
-      setActiveCity(cityName);
-
-      await fetchHistory();
-      await fetchForecast(cityName);
-    } catch (err) {
-      console.log(err);
-      setError("Could not fetch weather");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  // Fetch forecast
-  const fetchForecast = async (cityName: string) => {
-    try {
-      const res = await api.get<ForecastItem[]>(`/weather/forecast?city=${cityName}`);
-
-      const list = res.data;
-
-      if (!Array.isArray(list)) {
-        setForecast([]);
-        return;
-      }
-
-      const grouped: Record<string, { temps: number[]; descriptions: string[] }> = {};
-
-      list.forEach((item) => {
-        const date = item.datetime.split(" ")[0]; // IMPORTANT FIX
-
-        if (!grouped[date]) {
-          grouped[date] = {
-            temps: [],
-            descriptions: [],
-          };
-        }
-
-        grouped[date].temps.push(item.temperature);
-        grouped[date].descriptions.push(item.description);
-      });
-
-      const formatted = Object.keys(grouped).map((date) => {
-        const temps = grouped[date].temps;
-
-        return {
-          date,
-          min: Math.min(...temps),
-          max: Math.max(...temps),
-          description: grouped[date].descriptions[0],
-        };
-      });
-
-      setForecast(formatted);
-    } catch (err) {
-      console.log("Failed to fetch forecast", err);
-      setForecast([]);
-    }
-  };
-
   const clearHistory = async () => {
     try {
       await api.delete("/history/");
@@ -207,9 +178,11 @@ export default function Dashboard() {
 
   // Load history on page load
   useEffect(() => {
-    fetchHistory();
-    fetchFavorites();
-    fetchUser();
+    const loadInitialData = async () => {
+      await Promise.all([fetchHistory(), fetchFavorites(), fetchUser()]);
+    };
+
+    loadInitialData();
   }, []);
 
 
@@ -223,7 +196,7 @@ export default function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <WeatherSearch onSearch={fetchWeather} />
+      <WeatherSearch onSearch={loadCity} />
 
       {/* Loading error */}
       {loading && <p>Loading...</p>}
@@ -237,7 +210,7 @@ export default function Dashboard() {
       <SearchHistory
         history={history}
         activeCity={activeCity}
-        onSelectCity={fetchWeatherFromFavorite}
+        onSelectCity={loadCity}
         onClearHistory={clearHistory}
       />
 
@@ -249,7 +222,7 @@ export default function Dashboard() {
       <FavoriteList
         favorites={favorites}
         activeCity={activeCity}
-        onSelectCity={fetchWeatherFromFavorite}
+        onSelectCity={loadCity}
         onDeleteFavorite={deleteFavorite}
       />
     </div>
