@@ -23,9 +23,6 @@ export default function Login() {
         },
       });
 
-      // DEBUG
-      console.log("LOGIN RESPONSE:", res.data);
-
       const token = res.data?.access_token;
 
       if (!token) {

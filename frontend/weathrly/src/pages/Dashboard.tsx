@@ -121,8 +121,6 @@ export default function Dashboard() {
     try {
       const res = await api.get(`/weather/forecast?city=${cityName}`);
 
-      console.log("RAW FORECAST:", res.data);
-
       const list = res.data;
 
       if (!Array.isArray(list)) {
@@ -156,8 +154,6 @@ export default function Dashboard() {
           description: grouped[date].descriptions[0],
         };
       });
-
-      console.log("FORMATTED FORECAST:", formatted);
 
       setForecast(formatted);
     } catch (err) {
