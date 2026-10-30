@@ -2,11 +2,10 @@ from fastapi import FastAPI
 from app.db.database import Base, engine
 from app.api.users import router as user_router
 from app.api.weather import router as weather_router
-from dotenv import load_dotenv
 from app.api import favorites
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import search_history
-load_dotenv()
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(

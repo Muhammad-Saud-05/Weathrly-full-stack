@@ -1,7 +1,7 @@
 import requests
-import os
 
-OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+from app.core.config import OPENWEATHER_API_KEY
+
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 REQUEST_TIMEOUT = 10
