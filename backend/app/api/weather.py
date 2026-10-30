@@ -63,7 +63,12 @@ def current_weather(
 
 # FORECAST
 @router.get("/forecast")
-def forecast(city: CityQuery):
+def forecast(
+    city: CityQuery,
+    current_user=Depends(get_current_user)
+):
+    city = normalize_city(city)
+
     try:
         return get_forecast(city)
     except WeatherError as err:
