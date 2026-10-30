@@ -2,6 +2,7 @@ import { useState } from "react";
 import { api } from "../api/axios";
 import { Link } from "react-router-dom";
 import { setToken } from "../utils/auth";
+import { getErrorMessage } from "../utils/errors";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -34,14 +35,10 @@ export default function Login() {
       // redirect to dashboard
       window.location.href = "/";
 
-    } catch (err: any) {
-      console.log("LOGIN ERROR:", err?.response?.data || err);
+    } catch (err) {
+      console.error("Login failed:", err);
 
-      setError(
-        err?.response?.data?.detail ||
-        err.message ||
-        "Login failed"
-      );
+      setError(getErrorMessage(err, "Login failed"));
     }
   };
 

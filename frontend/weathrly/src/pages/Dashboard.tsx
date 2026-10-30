@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { isAxiosError } from "axios";
 import { api } from "../api/axios";
+import { getErrorMessage } from "../utils/errors";
 import type { Favorite, ForecastDay, ForecastItem, HistoryItem, User, Weather } from "../types";
 import WeatherSearch from "../components/weather/WeatherSearch";
 import Forecast from "../components/weather/Forecast";
@@ -76,7 +76,7 @@ export default function Dashboard() {
       setWeather(null);
       setForecast([]);
       setActiveCity("");
-      setError("Could not fetch weather");
+      setError(getErrorMessage(err, "Could not fetch weather"));
     } finally {
       inFlight.current = false;
       setLoading(false);
@@ -90,7 +90,7 @@ export default function Dashboard() {
       const res = await api.get<HistoryItem[]>("/history/");
       setHistory(res.data);
     } catch (err) {
-      console.log("Failed to fetch history", err);
+      console.error("Failed to fetch history", err);
     }
   };
 
@@ -101,7 +101,7 @@ export default function Dashboard() {
       const res = await api.get<Favorite[]>("/favorites/");
       setFavorites(res.data);
     } catch (err) {
-      console.log("Failed to fetch favorites", err);
+      console.error("Failed to fetch favorites", err);
     }
   };
 
@@ -118,8 +118,8 @@ export default function Dashboard() {
 
       await fetchFavorites();
     } catch (err) {
-      console.log("Failed to add favorite", err);
-      alert((isAxiosError(err) && err.response?.data?.detail) || "Could not add favorite");
+      console.error("Failed to add favorite", err);
+      alert(getErrorMessage(err, "Could not add favorite"));
     }
   };
 
@@ -130,7 +130,7 @@ export default function Dashboard() {
       await api.delete(`/favorites/${id}`);
       await fetchFavorites();
     } catch (err) {
-      console.log("Failed to delete favorite", err);
+      console.error("Failed to delete favorite", err);
     }
   };
 
@@ -140,7 +140,7 @@ export default function Dashboard() {
       await api.delete("/history/");
       await fetchHistory();
     } catch (err) {
-      console.log("Failed to clear history", err);
+      console.error("Failed to clear history", err);
     }
   };
 
