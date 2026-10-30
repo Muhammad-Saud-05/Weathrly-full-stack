@@ -30,7 +30,9 @@ function groupForecast(list: ForecastItem[]): ForecastDay[] {
     grouped[date].descriptions.push(item.description);
   });
 
-  return Object.keys(grouped).map((date) => {
+  // dt_txt is UTC, so these dates are UTC days and can differ from the city's local day.
+  // The 3-hourly data can span six dates; keep the first five to match the "5-Day Forecast" heading.
+  return Object.keys(grouped).slice(0, 5).map((date) => {
     const temps = grouped[date].temps;
 
     return {
