@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.favorite_city import FavoriteCity
@@ -15,9 +16,9 @@ def add_favorite(
     current_user=Depends(get_current_user),
 ):
     # prevent duplicates
-    existing = db.query(FavoriteCity).filter_by(
-        user_id=current_user.id,
-        city_name=data.city_name
+    existing = db.query(FavoriteCity).filter(
+        FavoriteCity.user_id == current_user.id,
+        func.lower(FavoriteCity.city_name) == data.city_name.strip().lower()
     ).first()
 
     if existing:

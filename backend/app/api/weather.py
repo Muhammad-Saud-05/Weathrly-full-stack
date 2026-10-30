@@ -31,6 +31,7 @@ def current_weather(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
+    # normalized only to build the lookup; history stores OpenWeather's canonical name
     city = normalize_city(city)
 
     try:
@@ -40,7 +41,7 @@ def current_weather(
 
     history = SearchHistory(
         user_id=current_user.id,
-        city_name=city,
+        city_name=result["city"],
         country=result["country"]
     )
 
