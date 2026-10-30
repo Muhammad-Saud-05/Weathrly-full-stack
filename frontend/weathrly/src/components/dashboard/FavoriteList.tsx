@@ -24,7 +24,12 @@ export default function FavoriteList({
           {favorites.map((favorite) => (
             <li key={favorite.id}>
               <span
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectCity(favorite.city_name)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onSelectCity(favorite.city_name);
+                }}
                 style={{
                   cursor: "pointer",
                   marginRight: "10px",
@@ -45,6 +50,7 @@ export default function FavoriteList({
               </span>
 
               <button
+                aria-label={`Remove ${favorite.city_name} from favorites`}
                 onClick={() =>
                   onDeleteFavorite(favorite.id)
                 }

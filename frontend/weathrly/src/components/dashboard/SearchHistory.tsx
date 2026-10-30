@@ -25,7 +25,12 @@ export default function SearchHistory({
             {history.map((item) => (
               <li key={item.id}>
                 <span
+                  role="button"
+                  tabIndex={0}
                   onClick={() => onSelectCity(item.city_name)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") onSelectCity(item.city_name);
+                  }}
                   style={{
                     cursor: "pointer",
                     fontWeight:
