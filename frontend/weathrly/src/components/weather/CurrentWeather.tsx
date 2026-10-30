@@ -39,7 +39,7 @@ export default function CurrentWeather({ weather, isFavorite, busy, onToggleFavo
           type="button"
           onClick={onToggleFavorite}
           aria-pressed={isFavorite}
-          className="flex shrink-0 items-center gap-2 rounded-full border border-white/30 bg-slate-900/40 px-4 py-2.5 text-[14px] font-medium text-white outline-none backdrop-blur-md transition duration-100 [text-shadow:none] hover:bg-slate-900/55 focus-visible:ring-4 focus-visible:ring-white/60 active:scale-[0.97] motion-reduce:active:scale-100"
+          className="sky-chip-dark flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-medium text-white outline-none transition duration-100 [text-shadow:none] focus-visible:ring-4 focus-visible:ring-white/60 active:scale-[0.97] motion-reduce:active:scale-100"
         >
           <svg
             aria-hidden="true"

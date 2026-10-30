@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { isAuthenticated } from "../utils/auth";
 import { useWeatherScene } from "../hooks/useWeatherScene";
+import Logo from "../components/Logo";
 import WeatherSky from "../components/sky/WeatherSky";
 import SceneIcon from "../components/sky/SceneIcon";
 import SceneSwitcher from "../components/sky/SceneSwitcher";
@@ -50,17 +51,7 @@ export default function Landing() {
 
       <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
         <header className="flex items-center py-6 [text-shadow:0_2px_28px_rgba(0,0,0,0.28)]">
-          <div className="flex items-center gap-2.5">
-            <svg aria-hidden="true" width="34" height="34" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="9" fill="#fff" fillOpacity="0.95" />
-              <circle cx="21" cy="11.5" r="4.5" fill="#ffb938" />
-              <path
-                d="M10.5 24a4.5 4.5 0 01-.4-8.98A6 6 0 0121.7 16.4a3.8 3.8 0 01-.2 7.6h-11z"
-                fill="#2f80e6"
-              />
-            </svg>
-            <span className="text-[19px] font-semibold tracking-[-0.01em]">Weathrly</span>
-          </div>
+          <Logo />
 
         </header>
 

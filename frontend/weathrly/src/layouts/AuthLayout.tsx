@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useWeatherScene } from "../hooks/useWeatherScene";
 import WeatherSky from "../components/sky/WeatherSky";
+import Logo from "../components/Logo";
 import SceneIcon from "../components/sky/SceneIcon";
 import SceneSwitcher from "../components/sky/SceneSwitcher";
 
@@ -23,17 +24,9 @@ export default function AuthLayout({ children }: Props) {
           <Link
             to="/"
             aria-label="Weathrly home"
-            className="flex w-fit items-center gap-2.5 rounded-lg outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+            className="block w-fit rounded-lg outline-none focus-visible:ring-4 focus-visible:ring-white/60"
           >
-            <svg aria-hidden="true" width="34" height="34" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="9" fill="#fff" fillOpacity="0.95" />
-              <circle cx="21" cy="11.5" r="4.5" fill="#ffb938" />
-              <path
-                d="M10.5 24a4.5 4.5 0 01-.4-8.98A6 6 0 0121.7 16.4a3.8 3.8 0 01-.2 7.6h-11z"
-                fill="#2f80e6"
-              />
-            </svg>
-            <span className="text-[19px] font-semibold tracking-[-0.01em]">Weathrly</span>
+            <Logo />
           </Link>
 
           <div key={scene.id} className="sky-text-in mt-10 lg:mt-24">
