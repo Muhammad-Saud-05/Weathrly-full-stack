@@ -62,8 +62,8 @@ export default function Dashboard() {
 
     try {
       const [weatherRes, forecastRes] = await Promise.all([
-        api.get<Weather>(`/weather/current?city=${city}`),
-        api.get<ForecastItem[]>(`/weather/forecast?city=${city}`),
+        api.get<Weather>("/weather/current", { params: { city } }),
+        api.get<ForecastItem[]>("/weather/forecast", { params: { city } }),
       ]);
 
       setWeather(weatherRes.data);
