@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.services.weather_service import (
@@ -13,6 +15,9 @@ from app.dependencies import get_current_user
 from app.utils.normalizer import normalize_city
 
 router = APIRouter(prefix="/weather", tags=["Weather"])
+
+# non-empty (not just whitespace), at most 100 characters
+CityQuery = Annotated[str, Query(min_length=1, max_length=100, pattern=r"\S")]
 
 
 # DB dependency
@@ -33,7 +38,7 @@ def raise_http_error(err: WeatherError):
 # CURRENT WEATHER
 @router.get("/current")
 def current_weather(
-    city: str,
+    city: CityQuery,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
@@ -58,7 +63,7 @@ def current_weather(
 
 # FORECAST
 @router.get("/forecast")
-def forecast(city: str):
+def forecast(city: CityQuery):
     try:
         return get_forecast(city)
     except WeatherError as err:
