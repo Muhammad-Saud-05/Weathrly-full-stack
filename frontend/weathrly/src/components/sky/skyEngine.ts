@@ -2,7 +2,7 @@ import type { SceneId } from "./scenes";
 
 type RGB = [number, number, number];
 
-const IDS: SceneId[] = ["sunny", "rain", "wind", "snow"];
+const IDS: SceneId[] = ["sunny", "rain", "wind", "snow", "cloudy"];
 
 // Cloud tint and strength per scene
 const CLOUD: Record<SceneId, { color: RGB; alpha: number }> = {
@@ -10,6 +10,7 @@ const CLOUD: Record<SceneId, { color: RGB; alpha: number }> = {
   rain: { color: [30, 40, 66], alpha: 0.62 },
   wind: { color: [255, 255, 255], alpha: 0.3 },
   snow: { color: [236, 241, 252], alpha: 0.42 },
+  cloudy: { color: [222, 229, 240], alpha: 0.6 },
 };
 
 const LEAF_COLORS = ["#ffd27a", "#ffa45c", "#c7e08a", "#ff8f6b"];
@@ -45,7 +46,7 @@ export function createSkyEngine(canvas: HTMLCanvasElement): SkyEngine | null {
   let flash = 0;
   let nextFlash = 5;
   let target: SceneId = "sunny";
-  const level: Record<SceneId, number> = { sunny: 1, rain: 0, wind: 0, snow: 0 };
+  const level: Record<SceneId, number> = { sunny: 1, rain: 0, wind: 0, snow: 0, cloudy: 0 };
 
   let clouds: Cloud[] = [];
   let drops: Drop[] = [];
@@ -193,8 +194,8 @@ export function createSkyEngine(canvas: HTMLCanvasElement): SkyEngine | null {
       if (a < 0.01) continue;
 
       const { color, alpha } = CLOUD[id];
-      const scale = id === "rain" ? 1.35 : 1;
-      const sink = id === "rain" ? h * 0.06 : 0;
+      const scale = id === "rain" ? 1.35 : id === "cloudy" ? 1.5 : 1;
+      const sink = id === "rain" ? h * 0.06 : id === "cloudy" ? h * 0.04 : 0;
 
       c.globalAlpha = a;
       for (const cl of clouds) {

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { SCENES, type SceneId } from "./scenes";
+import { SKY_GRADIENTS, type SceneId } from "./scenes";
 import { createSkyEngine, type SkyEngine } from "./skyEngine";
 
 interface Props {
@@ -60,11 +60,11 @@ export default function WeatherSky({ scene, animate, className = "absolute inset
 
   return (
     <div aria-hidden="true" className={`${className} overflow-hidden`}>
-      {SCENES.map((s) => (
+      {(Object.keys(SKY_GRADIENTS) as SceneId[]).map((id) => (
         <div
-          key={s.id}
+          key={id}
           className="absolute inset-0 transition-opacity duration-[1400ms] motion-reduce:duration-200"
-          style={{ background: s.sky, opacity: s.id === scene ? 1 : 0 }}
+          style={{ background: SKY_GRADIENTS[id], opacity: id === scene ? 1 : 0 }}
         />
       ))}
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />

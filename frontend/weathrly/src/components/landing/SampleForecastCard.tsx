@@ -1,12 +1,10 @@
 import SceneIcon from "../sky/SceneIcon";
+import { formatTemp } from "../../utils/temperature";
 import type { Scene } from "../sky/scenes";
 
 interface Props {
   scene: Scene;
 }
-
-// Proper minus sign for negative temperatures
-const deg = (n: number) => `${n < 0 ? "−" : ""}${Math.abs(n)}°`;
 
 // A preview of what the dashboard shows. The numbers are illustrative, not live data.
 export default function SampleForecastCard({ scene }: Props) {
@@ -21,7 +19,7 @@ export default function SampleForecastCard({ scene }: Props) {
         </div>
 
         <div className="mt-4 flex items-end justify-between">
-          <p className="text-[84px] font-light leading-[0.9] tracking-[-0.05em]">{deg(sample.temp)}</p>
+          <p className="text-[84px] font-light leading-[0.9] tracking-[-0.05em]">{formatTemp(sample.temp)}</p>
           <div className="flex size-14 items-center justify-center rounded-2xl bg-slate-900/90 text-white">
             <SceneIcon id={scene.id} size={30} />
           </div>
@@ -45,8 +43,8 @@ export default function SampleForecastCard({ scene }: Props) {
               <div className="flex justify-center text-slate-800">
                 <SceneIcon id={day.icon} size={20} />
               </div>
-              <p className="text-[14px] font-semibold">{deg(day.high)}</p>
-              <p className="text-[13px] text-slate-600">{deg(day.low)}</p>
+              <p className="text-[14px] font-semibold">{formatTemp(day.high)}</p>
+              <p className="text-[13px] text-slate-600">{formatTemp(day.low)}</p>
             </li>
           ))}
         </ul>

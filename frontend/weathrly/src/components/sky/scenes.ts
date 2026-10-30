@@ -1,4 +1,4 @@
-export type SceneId = "sunny" | "rain" | "wind" | "snow";
+export type SceneId = "sunny" | "rain" | "wind" | "snow" | "cloudy";
 
 export interface SampleDay {
   day: string;
@@ -27,6 +27,19 @@ export interface Scene {
   sky: string;
 }
 
+// Every sky stays mid-to-dark so white text keeps its contrast
+const SKY = {
+  sunny: "linear-gradient(180deg, #1b6fe0 0%, #2f80e6 42%, #7fbaf5 76%, #ffdfa0 100%)",
+  rain: "linear-gradient(180deg, #121a2e 0%, #26324f 50%, #44587e 100%)",
+  wind: "linear-gradient(180deg, #0f5f6e 0%, #278a8a 50%, #86cdb8 100%)",
+  snow: "linear-gradient(180deg, #1f2c58 0%, #4e66a0 55%, #a3b6dc 100%)",
+  cloudy: "linear-gradient(180deg, #34425c 0%, #5b6d8a 52%, #98a9c2 100%)",
+};
+
+/** Sky gradient for every scene, including ones that aren't part of the landing showcase. */
+export const SKY_GRADIENTS: Record<SceneId, string> = SKY;
+
+/** The four scenes shown on the landing and login pages. */
 export const SCENES: Scene[] = [
   {
     id: "sunny",
@@ -47,7 +60,7 @@ export const SCENES: Scene[] = [
         { day: "Fri", icon: "sunny", high: 29, low: 20 },
       ],
     },
-    sky: "linear-gradient(180deg, #1b6fe0 0%, #2f80e6 42%, #7fbaf5 76%, #ffdfa0 100%)",
+    sky: SKY.sunny,
   },
   {
     id: "rain",
@@ -68,7 +81,7 @@ export const SCENES: Scene[] = [
         { day: "Fri", icon: "rain", high: 16, low: 11 },
       ],
     },
-    sky: "linear-gradient(180deg, #121a2e 0%, #26324f 50%, #44587e 100%)",
+    sky: SKY.rain,
   },
   {
     id: "wind",
@@ -89,7 +102,7 @@ export const SCENES: Scene[] = [
         { day: "Fri", icon: "wind", high: 12, low: 4 },
       ],
     },
-    sky: "linear-gradient(180deg, #0f5f6e 0%, #278a8a 50%, #86cdb8 100%)",
+    sky: SKY.wind,
   },
   {
     id: "snow",
@@ -110,6 +123,6 @@ export const SCENES: Scene[] = [
         { day: "Fri", icon: "snow", high: -1, low: -6 },
       ],
     },
-    sky: "linear-gradient(180deg, #1f2c58 0%, #4e66a0 55%, #a3b6dc 100%)",
+    sky: SKY.snow,
   },
 ];

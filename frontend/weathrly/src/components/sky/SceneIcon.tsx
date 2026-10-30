@@ -41,6 +41,12 @@ export default function SceneIcon({ id, size = 22 }: Props) {
           <path d="M3 16.5h6.5a2.2 2.2 0 11-2.1 2.9" />
         </svg>
       );
+    case "cloudy":
+      return (
+        <svg {...common}>
+          <path d="M7 18a4.5 4.5 0 01-.4-8.98A6 6 0 0118 11a3.5 3.5 0 01-.5 7H7z" />
+        </svg>
+      );
     case "snow":
       return (
         <svg {...common}>
