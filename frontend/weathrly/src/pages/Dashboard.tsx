@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api/axios";
 import { getErrorMessage } from "../utils/errors";
+import { removeToken } from "../utils/auth";
 import type { Favorite, ForecastDay, ForecastItem, HistoryItem, User, Weather } from "../types";
 import WeatherSearch from "../components/weather/WeatherSearch";
 import Forecast from "../components/weather/Forecast";
@@ -50,6 +52,7 @@ export default function Dashboard() {
   const [activeCity, setActiveCity] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const inFlight = useRef(false);
+  const navigate = useNavigate();
 
 
   // Load current weather and forecast for a city, then refresh history
@@ -160,8 +163,8 @@ export default function Dashboard() {
 
   // logout
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    removeToken();
+    navigate("/login", { replace: true });
   };
 
 
