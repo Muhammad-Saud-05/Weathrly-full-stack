@@ -30,11 +30,6 @@ const primaryButton =
   "shadow-lg shadow-black/20 outline-none transition duration-100 ease-out hover:bg-[#0077ed] " +
   "focus-visible:ring-4 focus-visible:ring-white/60 active:scale-[0.97] motion-reduce:active:scale-100";
 
-const secondaryButton =
-  "sky-chip inline-flex h-12 items-center justify-center rounded-full px-6 text-[16px] font-medium text-white " +
-  "outline-none transition duration-100 hover:bg-white/25 focus-visible:ring-4 focus-visible:ring-white/60 " +
-  "active:scale-[0.97] motion-reduce:active:scale-100";
-
 function Arrow() {
   return (
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -54,7 +49,7 @@ export default function Landing() {
       <WeatherSky scene={scene.id} animate={!reducedMotion} className="fixed inset-0" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between py-6 [text-shadow:0_2px_28px_rgba(0,0,0,0.28)]">
+        <header className="flex items-center py-6 [text-shadow:0_2px_28px_rgba(0,0,0,0.28)]">
           <div className="flex items-center gap-2.5">
             <svg aria-hidden="true" width="34" height="34" viewBox="0 0 32 32" fill="none">
               <rect width="32" height="32" rx="9" fill="#fff" fillOpacity="0.95" />
@@ -67,12 +62,6 @@ export default function Landing() {
             <span className="text-[19px] font-semibold tracking-[-0.01em]">Weathrly</span>
           </div>
 
-          <Link
-            to={destination}
-            className="sky-chip rounded-full px-5 py-2.5 text-[15px] font-medium text-white outline-none transition hover:bg-white/25 focus-visible:ring-4 focus-visible:ring-white/60"
-          >
-            {signedIn ? "Dashboard" : "Sign in"}
-          </Link>
         </header>
 
         <main>
@@ -97,12 +86,9 @@ export default function Landing() {
 
               <div className="mt-9 flex flex-wrap items-center gap-3 [text-shadow:none]">
                 <Link to={destination} className={primaryButton}>
-                  {signedIn ? "Open dashboard" : "Get started"}
+                  {signedIn ? "Open dashboard" : "Sign in"}
                   <Arrow />
                 </Link>
-                <a href="#features" className={secondaryButton}>
-                  See what's inside
-                </a>
               </div>
 
               <div className="mt-10">
@@ -114,7 +100,7 @@ export default function Landing() {
           </section>
 
           {/* Features */}
-          <section id="features" className="scroll-mt-6 py-16 motion-safe:scroll-smooth">
+          <section className="py-16">
             <h2 className="max-w-2xl text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-[1.02] tracking-[-0.035em] [text-shadow:0_2px_28px_rgba(0,0,0,0.28)]">
               Everything you need to read the sky.
             </h2>
@@ -132,23 +118,6 @@ export default function Landing() {
             </ul>
           </section>
 
-          {/* Closing call to action */}
-          <section className="py-16">
-            <div className="sky-glass flex flex-col items-start justify-between gap-6 rounded-[28px] p-8 text-slate-900 sm:p-10 md:flex-row md:items-center">
-              <div>
-                <h2 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
-                  Ready when you are.
-                </h2>
-                <p className="mt-2 text-[17px] text-slate-700">
-                  {signedIn ? "Your dashboard is waiting." : "Sign in and check the sky."}
-                </p>
-              </div>
-              <Link to={destination} className={primaryButton + " shrink-0"}>
-                {signedIn ? "Open dashboard" : "Get started"}
-                <Arrow />
-              </Link>
-            </div>
-          </section>
         </main>
 
         <footer className="pb-10 pt-4 text-center">
