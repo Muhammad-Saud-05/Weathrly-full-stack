@@ -71,7 +71,8 @@ export default function Dashboard() {
 
       setWeather(weatherRes.data);
       setForecast(groupForecast(forecastRes.data));
-      setActiveCity(city);
+      // use the API's canonical name so it matches favorites and history
+      setActiveCity(weatherRes.data.city);
 
       await fetchHistory();
     } catch (err) {
