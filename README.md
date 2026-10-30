@@ -81,7 +81,7 @@ npm run dev
 | -------------- | ------------------------------------------------------- |
 | `VITE_API_URL` | Backend base URL (default `http://127.0.0.1:8000`)      |
 
-The app is at http://localhost:5173.
+The app is at http://localhost:5173. The landing page is at `/`, sign-in at `/login`, and the dashboard at `/dashboard` (it redirects to `/login` when you're signed out).
 
 ### Creating your first account
 

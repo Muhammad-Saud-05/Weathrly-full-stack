@@ -6,9 +6,11 @@ interface Props {
   scene: SceneId;
   // false renders a single still frame (reduced motion)
   animate: boolean;
+  // positioning of the sky; fixed lets it stay put behind a scrolling page
+  className?: string;
 }
 
-export default function WeatherSky({ scene, animate }: Props) {
+export default function WeatherSky({ scene, animate, className = "absolute inset-0" }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SkyEngine | null>(null);
 
@@ -57,7 +59,7 @@ export default function WeatherSky({ scene, animate }: Props) {
   }, [scene, animate]);
 
   return (
-    <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+    <div aria-hidden="true" className={`${className} overflow-hidden`}>
       {SCENES.map((s) => (
         <div
           key={s.id}
