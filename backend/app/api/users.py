@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.schemas.user import UserCreate
@@ -14,8 +16,16 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter()
 
-@router.post("/users")
+@router.post("/users", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(
+        or_(User.email == user.email, User.username == user.username)
+    ).first()
+
+    if existing:
+        field = "Email" if existing.email == user.email else "Username"
+        raise HTTPException(status_code=409, detail=f"{field} already registered")
+
     hashed_pw = hash_password(user.password)
 
     new_user = User(
@@ -25,7 +35,14 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     )
 
     db.add(new_user)
-    db.commit()
+
+    try:
+        db.commit()
+    except IntegrityError:
+        # another request registered the same email/username between the check and the insert
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Email or username already registered")
+
     db.refresh(new_user)
 
     return {
