@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.models.search_history import SearchHistory
+from app.schemas.common import MessageResponse
 from app.schemas.search_history import SearchHistoryResponse
 from app.dependencies import get_current_user, get_db
 from app.models.user import User
@@ -20,7 +21,7 @@ def get_history(
         .all()
 
 # CLEAR HISTORY
-@router.delete("/")
+@router.delete("/", response_model=MessageResponse)
 def clear_history(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)

@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError
+from sqlalchemy.orm import Session
 
 from app.core.jwt import verify_access_token
 from app.db.database import SessionLocal
@@ -19,7 +20,7 @@ def get_db():
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db=Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

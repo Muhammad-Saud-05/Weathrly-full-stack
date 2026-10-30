@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.schemas.user import UserCreate
+from app.schemas.user import TokenResponse, UserCreate, UserResponse
 from app.models.user import User
 from app.core.security import hash_password
 
@@ -15,7 +15,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter()
 
-@router.post("/users", status_code=status.HTTP_201_CREATED)
+@router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(
         or_(User.email == user.email, User.username == user.username)
@@ -50,7 +50,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         "email": new_user.email
     }
 
-@router.post("/login")
+@router.post("/login", response_model=TokenResponse)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -73,7 +73,7 @@ def login(
         "token_type": "bearer"
     }
 
-@router.get("/me")
+@router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return {
         "id": current_user.id,

@@ -3,6 +3,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.favorite_city import FavoriteCity
+from app.schemas.common import MessageResponse
 from app.schemas.favorite_city import FavoriteCityCreate, FavoriteCityResponse
 from app.dependencies import get_current_user, get_db
 
@@ -49,7 +50,7 @@ def get_favorites(
 
 
 # DELETE FAVORITE
-@router.delete("/{favorite_id}")
+@router.delete("/{favorite_id}", response_model=MessageResponse)
 def delete_favorite(
     favorite_id: int,
     db: Session = Depends(get_db),
