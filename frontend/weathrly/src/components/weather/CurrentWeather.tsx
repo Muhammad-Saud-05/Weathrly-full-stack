@@ -1,5 +1,7 @@
+import type { Weather } from "../../types";
+
 interface Props {
-  weather: any;
+  weather: Weather | null;
   onFavorite: () => void;
 }
 

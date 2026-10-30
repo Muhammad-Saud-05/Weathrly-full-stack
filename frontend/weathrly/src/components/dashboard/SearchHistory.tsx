@@ -1,5 +1,7 @@
+import type { HistoryItem } from "../../types";
+
 interface SearchHistoryProps {
-  history: any[];
+  history: HistoryItem[];
   activeCity: string;
   onSelectCity: (city: string) => void;
   onClearHistory: () => void;

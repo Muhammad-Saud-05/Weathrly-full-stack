@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { isAxiosError } from "axios";
 import { api } from "../api/axios";
+import type { Favorite, ForecastDay, ForecastItem, HistoryItem, User, Weather } from "../types";
 import WeatherSearch from "../components/weather/WeatherSearch";
 import Forecast from "../components/weather/Forecast";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
@@ -8,14 +10,14 @@ import FavoriteList from "../components/dashboard/FavoriteList";
 import CurrentWeather from "../components/weather/CurrentWeather";
 
 export default function Dashboard() {
-  const [weather, setWeather] = useState<any>(null);
+  const [weather, setWeather] = useState<Weather | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [history, setHistory] = useState<any[]>([]);
-  const [favorites, setFavorites] = useState<any[]>([]);
-  const [forecast, setForecast] = useState<any[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [forecast, setForecast] = useState<ForecastDay[]>([]);
   const [activeCity, setActiveCity] = useState<string>("");
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
 
   // Fetch weather
@@ -27,7 +29,7 @@ export default function Dashboard() {
     setWeather(null);
 
     try {
-      const res = await api.get(`/weather/current?city=${searchedCity}`);
+      const res = await api.get<Weather>(`/weather/current?city=${searchedCity}`);
 
       setWeather(res.data);
       setActiveCity(searchedCity);
@@ -35,7 +37,7 @@ export default function Dashboard() {
       await fetchHistory();
       await fetchForecast(searchedCity);
 
-    } catch (err: any) {
+    } catch (err) {
     console.log(err);
     setError("Could not fetch weather");
     } finally {
@@ -47,7 +49,7 @@ export default function Dashboard() {
   // Fetch history
   const fetchHistory = async () => {
     try {
-      const res = await api.get("/history/");
+      const res = await api.get<HistoryItem[]>("/history/");
       setHistory(res.data);
     } catch (err) {
       console.log("Failed to fetch history", err);
@@ -58,7 +60,7 @@ export default function Dashboard() {
   // Fetch favorites
   const fetchFavorites = async () => {
     try {
-      const res = await api.get("/favorites/");
+      const res = await api.get<Favorite[]>("/favorites/");
       setFavorites(res.data);
     } catch (err) {
       console.log("Failed to fetch favorites", err);
@@ -77,9 +79,9 @@ export default function Dashboard() {
       });
 
       await fetchFavorites();
-    } catch (err: any) {
+    } catch (err) {
       console.log("Failed to add favorite", err);
-      alert(err?.response?.data?.detail || "Could not add favorite");
+      alert((isAxiosError(err) && err.response?.data?.detail) || "Could not add favorite");
     }
   };
 
@@ -101,7 +103,7 @@ export default function Dashboard() {
     setError("");
 
     try {
-      const res = await api.get(`/weather/current?city=${cityName}`);
+      const res = await api.get<Weather>(`/weather/current?city=${cityName}`);
       setWeather(res.data);
       setActiveCity(cityName);
 
@@ -119,7 +121,7 @@ export default function Dashboard() {
   // Fetch forecast
   const fetchForecast = async (cityName: string) => {
     try {
-      const res = await api.get(`/weather/forecast?city=${cityName}`);
+      const res = await api.get<ForecastItem[]>(`/weather/forecast?city=${cityName}`);
 
       const list = res.data;
 
@@ -128,9 +130,9 @@ export default function Dashboard() {
         return;
       }
 
-      const grouped: Record<string, any> = {};
+      const grouped: Record<string, { temps: number[]; descriptions: string[] }> = {};
 
-      list.forEach((item: any) => {
+      list.forEach((item) => {
         const date = item.datetime.split(" ")[0]; // IMPORTANT FIX
 
         if (!grouped[date]) {
@@ -195,7 +197,7 @@ export default function Dashboard() {
   // user 
   const fetchUser = async () => {
     try {
-      const res = await api.get("/me");
+      const res = await api.get<User>("/me");
       setUser(res.data);
     } catch (err) {
       console.error("Failed to fetch user:", err);

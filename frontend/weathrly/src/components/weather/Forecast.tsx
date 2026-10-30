@@ -1,9 +1,4 @@
-interface ForecastDay {
-  date: string;
-  min: number;
-  max: number;
-  description: string;
-}
+import type { ForecastDay } from "../../types";
 
 interface Props {
   forecast: ForecastDay[];

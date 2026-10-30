@@ -1,5 +1,7 @@
+import type { Favorite } from "../../types";
+
 interface FavoriteListProps {
-  favorites: any[];
+  favorites: Favorite[];
   activeCity: string;
   onSelectCity: (city: string) => void;
   onDeleteFavorite: (id: number) => void;
