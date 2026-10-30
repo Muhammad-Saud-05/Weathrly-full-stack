@@ -12,7 +12,7 @@ import FavoriteList from "../components/dashboard/FavoriteList";
 import EmptyState from "../components/dashboard/EmptyState";
 import CurrentWeather from "../components/weather/CurrentWeather";
 
-// Shown as quick picks on a fresh dashboard, after the user's own favorites
+
 const DEFAULT_SUGGESTIONS = ["London", "Tokyo", "Muscat", "New York"];
 
 function groupForecast(list: ForecastItem[]): ForecastDay[] {
@@ -34,8 +34,7 @@ function groupForecast(list: ForecastItem[]): ForecastDay[] {
     grouped[date].descriptions.push(item.description);
   });
 
-  // dt_txt is UTC, so these dates are UTC days and can differ from the city's local day.
-  // The 3-hourly data can span six dates; keep the first five to match the "5-Day Forecast" heading.
+
   return Object.keys(grouped).slice(0, 5).map((date) => {
     const temps = grouped[date].temps;
 
@@ -61,8 +60,7 @@ export default function Dashboard() {
   const inFlight = useRef(false);
 
 
-  // Load current weather and forecast for a city, then refresh history.
-  // Resolves true on success so the search box knows when to clear itself.
+
   const loadCity = async (city: string): Promise<boolean> => {
     if (!city || inFlight.current) return false;
 
@@ -78,9 +76,9 @@ export default function Dashboard() {
 
       setWeather(weatherRes.data);
       setForecast(groupForecast(forecastRes.data));
-      // use the API's canonical name so it matches favorites and history
+
       setActiveCity(weatherRes.data.city);
-      // the sky follows the weather of the city on screen
+  
       setScene(sceneForDescription(weatherRes.data.description));
 
       await fetchHistory();
@@ -100,7 +98,7 @@ export default function Dashboard() {
   };
 
 
-  // Fetch history
+
   const fetchHistory = async () => {
     try {
       const res = await api.get<HistoryItem[]>("/history/");
@@ -111,7 +109,7 @@ export default function Dashboard() {
   };
 
 
-  // Fetch favorites
+
   const fetchFavorites = async () => {
     try {
       const res = await api.get<Favorite[]>("/favorites/");
@@ -162,7 +160,7 @@ export default function Dashboard() {
   };
 
 
-  // The Save button toggles: saved cities are matched case-insensitively, like the backend does
+  // The Save button toggles
   const savedFavorite = weather
     ? favorites.find((f) => f.city_name.toLowerCase() === weather.city.toLowerCase())
     : undefined;
