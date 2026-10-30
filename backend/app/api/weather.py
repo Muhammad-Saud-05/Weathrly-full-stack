@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.services.weather_service import get_current_weather, get_forecast
+from app.services.weather_service import (
+    get_current_weather,
+    get_forecast,
+    CityNotFoundError,
+    WeatherError,
+)
 from app.db.database import SessionLocal
 from app.models.search_history import SearchHistory
 from app.dependencies import get_current_user
@@ -19,6 +24,12 @@ def get_db():
         db.close()
 
 
+def raise_http_error(err: WeatherError):
+    if isinstance(err, CityNotFoundError):
+        raise HTTPException(status_code=404, detail="City not found")
+    raise HTTPException(status_code=502, detail="Weather service unavailable")
+
+
 # CURRENT WEATHER
 @router.get("/current")
 def current_weather(
@@ -27,10 +38,11 @@ def current_weather(
     current_user=Depends(get_current_user)
 ):
     city = normalize_city(city)
-    result = get_current_weather(city)
 
-    if "status_code" in result:
-        return result
+    try:
+        result = get_current_weather(city)
+    except WeatherError as err:
+        raise_http_error(err)
 
     history = SearchHistory(
         user_id=current_user.id,
@@ -47,4 +59,7 @@ def current_weather(
 # FORECAST
 @router.get("/forecast")
 def forecast(city: str):
-    return get_forecast(city)
+    try:
+        return get_forecast(city)
+    except WeatherError as err:
+        raise_http_error(err)

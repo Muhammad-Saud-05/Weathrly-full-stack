@@ -4,24 +4,48 @@ import os
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
+REQUEST_TIMEOUT = 10
 
 
-def get_current_weather(city: str):
+class WeatherError(Exception):
+    """Base class for weather lookup failures."""
+
+
+class CityNotFoundError(WeatherError):
+    pass
+
+
+class WeatherUpstreamError(WeatherError):
+    """OpenWeather was unreachable, errored, or rejected our API key."""
+
+
+def _fetch(url: str, city: str) -> dict:
     params = {
         "q": city,
         "appid": OPENWEATHER_API_KEY,
         "units": "metric"
     }
 
-    response = requests.get(BASE_URL, params=params)
+    try:
+        response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
+    except requests.RequestException:
+        raise WeatherUpstreamError("Weather service unavailable")
+
+    if response.status_code == 404:
+        raise CityNotFoundError(city)
 
     if response.status_code != 200:
-        return {
-            "status_code": response.status_code,
-            "response": response.json()
-        }
+        # covers 401 (bad API key), 429 and 5xx; details are deliberately not passed on
+        raise WeatherUpstreamError("Weather service unavailable")
 
-    data = response.json()
+    try:
+        return response.json()
+    except ValueError:
+        raise WeatherUpstreamError("Weather service unavailable")
+
+
+def get_current_weather(city: str):
+    data = _fetch(BASE_URL, city)
 
     return {
         "city": data["name"],
@@ -33,21 +57,7 @@ def get_current_weather(city: str):
     }
 
 def get_forecast(city: str):
-    params = {
-        "q": city,
-        "appid": OPENWEATHER_API_KEY,
-        "units": "metric"
-    }
-
-    response = requests.get(FORECAST_URL, params=params)
-
-    if response.status_code != 200:
-        return {
-            "status_code": response.status_code,
-            "response": response.json()
-        }
-
-    data = response.json()
+    data = _fetch(FORECAST_URL, city)
 
     forecast = []
 
